@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск анкет</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 220px;
+            background-color: #343a40;
+            color: white;
+            padding-top: 20px;
+            z-index: 1000;
+        }
+
+        .sidebar a {
+            color: white;
+            display: block;
+            padding: 12px 20px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .sidebar a:hover {
+            background-color: #495057;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 20px;
+            overflow-y: auto;
+            min-height: 100vh;
+        }
+
+        .profile-card {
+            transition: transform 0.2s;
+            animation: slideUpFade 0.6s ease-out both;
+        }
+
+        .profile-card:hover {
+            transform: scale(1.03);
+        }
+
+        @keyframes slideUpFade {
+            from {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .fade-in {
+            opacity: 1 !important;
+            animation: none !important;
+        }
+
+        /* Всплывающее уведомление */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Левая боковая панель -->
+<div class="sidebar">
+    <a href="{{ url_for('explore') }}">🔍 Найти людей</a>
+    {% if users %}
+        <a href="{{ url_for('chat', with_user=users[0].username) }}">💬 Чат с {{ users[0].username }}</a>
+    {% endif %}
+    <a href="{{ url_for('profile') }}">👤 Профиль</a>
+    {% if session.get('role') == 'admin' %}
+        <a href="{{ url_for('admin_panel') }}">🛠 Админ</a>
+    {% endif %}
+    <a href="{{ url_for('logout') }}">🚪 Выйти</a>
+</div>
+
+<!-- Основной контент -->
+<div class="main-content">
+    <h2 class="text-center fade-in">Поиск пользователей</h2>
+
+    <div class="row justify-content-center">
+        {% for user in users %}
+            <div class="col-md-4 mb-4">
+                <div class="profile-card shadow-lg text-center text-dark p-3 rounded-4 bg-light"
+                     style="animation-delay: {{ (loop.index0 + 1) * 0.1 }}s;">
+                    <img src="{{ user.avatar }}" alt="Аватар {{ user.username }}" class="rounded-circle mb-3" width="100" height="100">
+                    <h4>{{ user.username }}</h4>
+                    {% if user.age %}
+                        <p>Возраст: {{ user.age }}</p>
+                    {% endif %}
+                    {% if user.city %}
+                        <p>Город: {{ user.city }}</p>
+                    {% endif %}
+                    {% if user.gender %}
+                        <p>Пол: {{ user.gender }}</p>
+                    {% endif %}
+                    <form method="GET" action="{{ url_for('like', liked_user=user.username) }}">
+                        <button type="submit" class="btn btn-like w-100">❤️ Лайк</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Всплывающее уведомление -->
+{% if session.get('new_likes') %}
+<div class="toast-container">
+    <div class="toast align-items-center text-white bg-success border-0 show" role="alert">
+        <div class="d-flex">
+            <div class="toast-body">
+                Вам поставили лайк: {{ session['new_likes'] | join(', ') }} 💖
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Знакомства онлайн</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+    <div class="hero-section">
+        <div class="overlay"></div>
+        <div class="hero-content text-center">
+            <h1 class="fade-in">Найди свою любовь ❤️</h1>
+            <p class="fade-in">Твой шанс встретить кого-то особенного прямо сейчас. Уникальный сервис для свиданий вслепую</p>
+            <div class="buttons fade-in">
+                <a href="{{ url_for('register') }}" class="btn btn-primary">Регистрация</a>
+                <a href="{{ url_for('login') }}" class="btn btn-outline-light">Вход</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

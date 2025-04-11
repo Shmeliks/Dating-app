@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Чат с {{ current_chat }}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+    body {
+      display: flex;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-right: 1px solid #dee2e6;
+    }
+    .chat-area {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+    .chat-messages {
+      flex-grow: 1;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+    .message {
+      margin-bottom: 10px;
+    }
+    .message .from {
+      font-weight: bold;
+    }
+    .chat-form {
+      display: flex;
+      gap: 10px;
+    }
+    .chat-form input {
+      flex-grow: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h5>Ваши чаты</h5>
+    <ul class="list-group">
+      {% for partner in chat_partners %}
+        <li class="list-group-item {% if partner == current_chat %}active{% endif %}">
+          <a href="{{ url_for('chat', with_user=partner) }}" class="text-decoration-none {% if partner == current_chat %}text-white{% endif %}">{{ partner }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+    <a href="{{ url_for('explore') }}" class="btn btn-outline-secondary mt-3">Назад</a>
+  </div>
+
+  <div class="chat-area">
+    <h4>Чат с {{ current_chat }}</h4>
+    <div class="chat-messages">
+      {% for msg in messages %}
+        <div class="message">
+          <span class="from">{{ msg[0] }}:</span>
+          <span class="text">{{ msg[2] }}</span>
+        </div>
+      {% endfor %}
+    </div>
+    <form class="chat-form" method="POST" action="{{ url_for('send_message') }}">
+      <input type="hidden" name="receiver" value="{{ current_chat }}">
+      <input type="text" name="message" placeholder="Введите сообщение..." class="form-control" required>
+      <button type="submit" class="btn btn-primary">Отправить</button>
+    </form>
+  </div>
+</body>
+</html>
