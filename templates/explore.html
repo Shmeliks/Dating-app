@@ -22,6 +22,11 @@
             color: white;
             padding-top: 20px;
             z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
         }
 
         .sidebar a {
@@ -39,8 +44,26 @@
         .main-content {
             margin-left: 240px;
             padding: 20px;
-            overflow-y: auto;
+            transition: margin-left 0.3s ease;
             min-height: 100vh;
+        }
+
+        .main-content.sidebar-hidden {
+            margin-left: 20px;
+        }
+
+        .toggle-btn {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 3000;
+            background-color: #212529;
+            color: white;
+            border: 2px solid white;
+            padding: 10px 15px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 4px;
         }
 
         .profile-card {
@@ -68,7 +91,6 @@
             animation: none !important;
         }
 
-        /* Всплывающее уведомление */
         .toast-container {
             position: fixed;
             top: 20px;
@@ -80,7 +102,7 @@
 <body>
 
 <!-- Левая боковая панель -->
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
     <a href="{{ url_for('explore') }}">🔍 Найти людей</a>
     {% if users %}
         <a href="{{ url_for('chat', with_user=users[0].username) }}">💬 Чат с {{ users[0].username }}</a>
@@ -92,8 +114,11 @@
     <a href="{{ url_for('logout') }}">🚪 Выйти</a>
 </div>
 
+<!-- Кнопка гамбургера -->
+<button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+
 <!-- Основной контент -->
-<div class="main-content">
+<div class="main-content" id="mainContent">
     <h2 class="text-center fade-in">Поиск пользователей</h2>
 
     <div class="row justify-content-center">
@@ -136,5 +161,13 @@
 {% endif %}
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const content = document.getElementById('mainContent');
+        sidebar.classList.toggle('hidden');
+        content.classList.toggle('sidebar-hidden');
+    }
+</script>
 </body>
 </html>
